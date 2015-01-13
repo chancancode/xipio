@@ -5,8 +5,12 @@ module Xipio
     end
 
     def call(env)
-      tld_length = env['HTTP_HOST'].end_with?('.xip.io') ? 6 : 1
-      ActionDispatch::Http::URL.tld_length = tld_length
+      if env['HTTP_HOST'] =~ /\.xip\.io(:\d+)?\z/
+        ActionDispatch::Http::URL.tld_length = 6
+      else
+        ActionDispatch::Http::URL.tld_length = 1
+      end
+
       @app.call(env)
     end
   end
